@@ -1,0 +1,46 @@
+{
+  "albums": [
+    {
+      "id": "1",
+      "name": "Nature & Landscapes",
+      "createdAt": "2026-09-07T10:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "City & Architecture",
+      "createdAt": "2026-09-07T11:30:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "Travel Memories",
+      "createdAt": "2026-09-07T14:15:00.000Z"
+    }
+  ],
+  "photos": [
+    {
+      "id": "101",
+      "albumId": "1",
+      "title": "Serene Mountain Lake",
+      "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "102",
+      "albumId": "1",
+      "title": "Golden Sunset Horizon",
+      "imageUrl": "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "103",
+      "albumId": "2",
+      "title": "Modern City Skyline",
+      "imageUrl": "https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "104",
+      "albumId": "3",
+      "title": "Sunny Beach Vacation",
+      "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
