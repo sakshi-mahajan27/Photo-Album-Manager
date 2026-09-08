@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "npx concurrently \"npm run server\" \"npm run dev\"",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
