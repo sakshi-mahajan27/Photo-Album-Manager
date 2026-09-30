@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 
-function AlbumForm({ onAddAlbum, onCancel }) {
+function AlbumForm({ onAddAlbum, onCancel, isSubmitting = false }) {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+
+  const handleInputChange = (e) => {
+    setName(e.target.value);
+    if (error) {
+      setError('');
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const trimmedName = name.trim();
+
     if (!trimmedName) {
-      setError('Album name cannot be empty.');
+      setError('Album name cannot be empty. Please enter a valid name.');
       return;
     }
 
@@ -19,42 +27,68 @@ function AlbumForm({ onAddAlbum, onCancel }) {
 
   return (
     <div className="card shadow-sm border-0 mb-4 p-4 bg-white rounded-3">
-      <h5 className="fw-bold text-primary mb-3">Create New Album</h5>
+      <div className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+        <h5 className="fw-bold text-primary mb-0">Create New Album</h5>
+        {onCancel && (
+          <button
+            type="button"
+            className="btn-close"
+            aria-label="Close"
+            onClick={onCancel}
+          ></button>
+        )}
+      </div>
 
       {error && (
-        <div className="alert alert-danger py-2 px-3 small mb-3" role="alert">
-          {error}
+        <div className="alert alert-danger d-flex align-items-center py-2 px-3 small mb-3 rounded-2" role="alert">
+          <div>{error}</div>
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="albumName" className="form-label fw-semibold text-dark">
-            Album Name
+            Album Name <span className="text-danger">*</span>
           </label>
           <input
             type="text"
-            className="form-control form-control-lg"
+            className={`form-control form-control-lg ${error ? 'is-invalid' : ''}`}
             id="albumName"
             placeholder="e.g., Summer Vacation 2026"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleInputChange}
+            disabled={isSubmitting}
             autoFocus
           />
+          <div className="form-text text-muted">
+            Enter a descriptive title for your photo collection.
+          </div>
         </div>
 
-        <div className="d-flex justify-content-end gap-2">
+        <div className="d-flex justify-content-end gap-2 pt-2">
           {onCancel && (
             <button
               type="button"
               className="btn btn-light px-4 fw-semibold"
               onClick={onCancel}
+              disabled={isSubmitting}
             >
               Cancel
             </button>
           )}
-          <button type="submit" className="btn btn-primary px-4 fw-semibold">
-            Create Album
+          <button
+            type="submit"
+            className="btn btn-primary px-4 fw-semibold d-flex align-items-center gap-2"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Creating...
+              </>
+            ) : (
+              'Save Album'
+            )}
           </button>
         </div>
       </form>

@@ -8,6 +8,7 @@ function AlbumsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const API_URL = 'http://localhost:5000';
 
@@ -43,6 +44,7 @@ function AlbumsPage() {
 
   // Add a new album via POST request
   const handleAddAlbum = async (albumName) => {
+    setIsSubmitting(true);
     try {
       const newAlbum = {
         name: albumName,
@@ -66,6 +68,8 @@ function AlbumsPage() {
       setShowForm(false);
     } catch (err) {
       alert('Unable to connect to backend server. Please ensure JSON Server is running on port 5000 (run `npm run server` or `npm run dev:all`).');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -136,6 +140,7 @@ function AlbumsPage() {
         <AlbumForm
           onAddAlbum={handleAddAlbum}
           onCancel={() => setShowForm(false)}
+          isSubmitting={isSubmitting}
         />
       )}
 
