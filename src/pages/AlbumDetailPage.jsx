@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import PhotoCard from '../components/PhotoCard';
+import PhotoForm from '../components/PhotoForm';
 
 function AlbumDetailPage() {
   const { id } = useParams();
@@ -8,6 +10,7 @@ function AlbumDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPhotoForm, setShowPhotoForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const API_URL = 'http://localhost:5000';
 
@@ -44,6 +47,55 @@ function AlbumDetailPage() {
       setError(err.message || 'Unable to load album details.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Add a new photo via POST request
+  const handleAddPhoto = async (photoData) => {
+    setIsSubmitting(true);
+    try {
+      const newPhoto = {
+        albumId: id,
+        title: photoData.title,
+        imageUrl: photoData.imageUrl
+      };
+
+      const response = await fetch(`${API_URL}/photos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newPhoto)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save new photo');
+      }
+
+      const createdPhoto = await response.json();
+      setPhotos((prev) => [...prev, createdPhoto]);
+      setShowPhotoForm(false);
+    } catch (err) {
+      alert(err.message || 'Error adding photo.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Delete a photo via DELETE request
+  const handleDeletePhoto = async (photoId) => {
+    try {
+      const response = await fetch(`${API_URL}/photos/${photoId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete photo');
+      }
+
+      setPhotos((prev) => prev.filter((photo) => String(photo.id) !== String(photoId)));
+    } catch (err) {
+      alert(err.message || 'Error deleting photo.');
     }
   };
 
@@ -99,14 +151,13 @@ function AlbumDetailPage() {
             </button>
           </div>
 
-          {/* Photo Form Container Placeholder */}
+          {/* Photo Form Container */}
           {showPhotoForm && (
-            <div className="alert alert-info shadow-sm p-4 mb-4 rounded-3">
-              <h6 className="fw-bold mb-2">Add Photo Form Placeholder</h6>
-              <p className="small mb-0">
-                Photo title and image URL form inputs will be activated later.
-              </p>
-            </div>
+            <PhotoForm
+              onAddPhoto={handleAddPhoto}
+              onCancel={() => setShowPhotoForm(false)}
+              isSubmitting={isSubmitting}
+            />
           )}
 
           {/* Photos Grid / Empty State */}
@@ -126,21 +177,11 @@ function AlbumDetailPage() {
           ) : (
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
               {photos.map((photo) => (
-                <div key={photo.id} className="col">
-                  <div className="card h-100 shadow-sm border-0">
-                    <img
-                      src={photo.imageUrl}
-                      alt={photo.title}
-                      className="card-img-top object-fit-cover"
-                      style={{ height: '180px' }}
-                    />
-                    <div className="card-body p-3">
-                      <h6 className="card-title fw-bold text-dark mb-0 text-truncate" title={photo.title}>
-                        {photo.title}
-                      </h6>
-                    </div>
-                  </div>
-                </div>
+                <PhotoCard
+                  key={photo.id}
+                  photo={photo}
+                  onDelete={handleDeletePhoto}
+                />
               ))}
             </div>
           )}
