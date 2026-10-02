@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PhotoCard from '../components/PhotoCard';
 import PhotoForm from '../components/PhotoForm';
+import SearchBar from '../components/SearchBar';
 
 function AlbumDetailPage() {
   const { id } = useParams();
@@ -11,6 +12,7 @@ function AlbumDetailPage() {
   const [error, setError] = useState(null);
   const [showPhotoForm, setShowPhotoForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const API_URL = 'http://localhost:5000';
 
@@ -99,6 +101,11 @@ function AlbumDetailPage() {
     }
   };
 
+  // Compute case-insensitive filtered photos list in memory
+  const filteredPhotos = photos.filter((photo) =>
+    photo.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
+  );
+
   return (
     <div className="container pb-5">
       {/* Navigation Header */}
@@ -160,6 +167,15 @@ function AlbumDetailPage() {
             />
           )}
 
+          {/* Search Bar (Rendered when album has photos) */}
+          {photos.length > 0 && (
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              placeholder={`Search ${photos.length} photos by title...`}
+            />
+          )}
+
           {/* Photos Grid / Empty State */}
           {photos.length === 0 ? (
             <div className="text-center py-5 bg-white rounded-3 shadow-sm border p-5 mt-4">
@@ -174,9 +190,24 @@ function AlbumDetailPage() {
                 Add First Photo
               </button>
             </div>
+          ) : filteredPhotos.length === 0 ? (
+            /* Empty Search Results State */
+            <div className="text-center py-5 bg-white rounded-3 shadow-sm border p-5">
+              <h5 className="fw-bold text-dark mb-2">No Matching Photos Found</h5>
+              <p className="text-muted mb-4">
+                No photos in <strong>"{album?.name}"</strong> match your search query "<strong>{searchTerm}</strong>".
+              </p>
+              <button
+                onClick={() => setSearchTerm('')}
+                className="btn btn-outline-primary px-4 py-2 fw-semibold"
+              >
+                Clear Search Filter
+              </button>
+            </div>
           ) : (
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
-              {photos.map((photo) => (
+            /* Photos Grid */
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-1">
+              {filteredPhotos.map((photo) => (
                 <PhotoCard
                   key={photo.id}
                   photo={photo}
