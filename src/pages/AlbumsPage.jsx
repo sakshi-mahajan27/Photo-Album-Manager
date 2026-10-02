@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faImages, faPlus, faXmark, faTriangleExclamation, faRotateRight, faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import AlbumCard from '../components/AlbumCard';
 import AlbumForm from '../components/AlbumForm';
 
@@ -117,21 +119,33 @@ function AlbumsPage() {
 
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn btn-primary px-4 py-2 fw-semibold shadow-sm align-self-start align-self-md-center"
+          className="btn btn-primary px-4 py-2 fw-semibold shadow-sm align-self-start align-self-md-center d-inline-flex align-items-center gap-2"
         >
-          {showForm ? 'Close Form' : 'Create New Album'}
+          {showForm ? (
+            <>
+              <FontAwesomeIcon icon={faXmark} />
+              <span>Close Form</span>
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faPlus} />
+              <span>Create New Album</span>
+            </>
+          )}
         </button>
       </div>
 
       {/* Error Message */}
       {error && (
         <div className="alert alert-danger shadow-sm d-flex align-items-center mb-4" role="alert">
-          <div>
+          <FontAwesomeIcon icon={faTriangleExclamation} className="me-2 fs-5 text-danger" />
+          <div className="flex-grow-1">
             <strong>Error:</strong> {error}
-            <button className="btn btn-sm btn-outline-danger ms-3" onClick={fetchData}>
-              Retry
-            </button>
           </div>
+          <button className="btn btn-sm btn-outline-danger ms-3 d-inline-flex align-items-center gap-1" onClick={fetchData}>
+            <FontAwesomeIcon icon={faRotateRight} />
+            <span>Retry</span>
+          </button>
         </div>
       )}
 
@@ -155,15 +169,17 @@ function AlbumsPage() {
       ) : albums.length === 0 ? (
         /* Empty State */
         <div className="text-center py-5 bg-white rounded-3 shadow-sm border p-5">
+          <FontAwesomeIcon icon={faFolderPlus} className="text-primary opacity-50 mb-3" style={{ fontSize: '3.5rem' }} />
           <h4 className="fw-bold text-dark mb-2">No Albums Found</h4>
           <p className="text-muted mb-4">
             You don't have any photo albums yet. Click the button below to create your first album!
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="btn btn-primary px-4 py-2 fw-semibold"
+            className="btn btn-primary px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"
           >
-            Create First Album
+            <FontAwesomeIcon icon={faPlus} />
+            <span>Create First Album</span>
           </button>
         </div>
       ) : (
@@ -184,3 +200,4 @@ function AlbumsPage() {
 }
 
 export default AlbumsPage;
+

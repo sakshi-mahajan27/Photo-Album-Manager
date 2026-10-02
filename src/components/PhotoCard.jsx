@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faImage } from '@fortawesome/free-solid-svg-icons';
 
 function PhotoCard({ photo, onDelete }) {
   const handleDeleteClick = () => {
@@ -22,8 +24,9 @@ function PhotoCard({ photo, onDelete }) {
           />
         </div>
         <div className="card-body p-3 d-flex flex-column justify-content-between">
-          <h6 className="card-title fw-bold text-dark mb-3 text-truncate" title={photo.title}>
-            {photo.title}
+          <h6 className="card-title fw-bold text-dark mb-3 text-truncate d-flex align-items-center" title={photo.title}>
+            <FontAwesomeIcon icon={faImage} className="me-2 text-purple opacity-75" />
+            <span className="text-truncate">{photo.title}</span>
           </h6>
           <div className="d-flex justify-content-end pt-2 border-top">
             <button
@@ -31,7 +34,8 @@ function PhotoCard({ photo, onDelete }) {
               className="btn btn-outline-danger btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
               title="Delete Photo"
             >
-              Delete
+              <FontAwesomeIcon icon={faTrash} />
+              <span>Delete</span>
             </button>
           </div>
         </div>
@@ -41,3 +45,4 @@ function PhotoCard({ photo, onDelete }) {
 }
 
 export default PhotoCard;
+

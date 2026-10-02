@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import logoLight from '../assets/logo.png';
 
 function Navbar() {
@@ -11,8 +13,9 @@ function Navbar() {
           <span>Photo Album Manager</span>
         </Link>
         <div className="navbar-nav ms-auto">
-          <Link className="nav-link active fw-semibold" to="/">
-            Home
+          <Link className="nav-link active fw-semibold d-flex align-items-center gap-2" to="/">
+            <FontAwesomeIcon icon={faHouse} />
+            <span>Home</span>
           </Link>
         </div>
       </div>
@@ -21,3 +24,4 @@ function Navbar() {
 }
 
 export default Navbar;
+

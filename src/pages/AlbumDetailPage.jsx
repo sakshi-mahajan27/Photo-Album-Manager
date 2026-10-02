@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faFolderOpen, faImage, faPlus, faXmark, faCircleExclamation, faImages, faMagnifyingGlass, faRotateLeft, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
 import PhotoCard from '../components/PhotoCard';
 import PhotoForm from '../components/PhotoForm';
 import SearchBar from '../components/SearchBar';
@@ -110,8 +112,9 @@ function AlbumDetailPage() {
     <div className="container pb-5">
       {/* Navigation Header */}
       <div className="mb-4 pt-2">
-        <Link to="/" className="btn btn-outline-secondary btn-sm px-3 fw-semibold">
-          &larr; Back to Albums
+        <Link to="/" className="btn btn-outline-secondary btn-sm px-3 fw-semibold d-inline-flex align-items-center gap-1">
+          <FontAwesomeIcon icon={faArrowLeft} />
+          <span>Back to Albums</span>
         </Link>
       </div>
 
@@ -126,11 +129,13 @@ function AlbumDetailPage() {
       ) : error ? (
         /* Error / Not Found State */
         <div className="card shadow-sm border-0 p-5 text-center bg-white mx-auto" style={{ maxWidth: '600px' }}>
+          <FontAwesomeIcon icon={faCircleExclamation} className="text-danger mb-3 opacity-75" style={{ fontSize: '3.5rem' }} />
           <h4 className="fw-bold text-dark mb-2">Album Error</h4>
           <p className="text-secondary mb-4">{error}</p>
           <div>
-            <Link to="/" className="btn btn-primary px-4 fw-semibold">
-              Return to All Albums
+            <Link to="/" className="btn btn-primary px-4 fw-semibold d-inline-flex align-items-center gap-2">
+              <FontAwesomeIcon icon={faArrowLeft} />
+              <span>Return to All Albums</span>
             </Link>
           </div>
         </div>
@@ -141,20 +146,32 @@ function AlbumDetailPage() {
             <div>
               <div className="d-flex align-items-center gap-2 mb-1">
                 <h1 className="fw-bold text-dark display-6 mb-0">{album?.name}</h1>
-                <span className="badge bg-purple-subtle text-purple border border-purple-subtle rounded-pill px-3 py-2 fs-6">
-                  {photos.length} {photos.length === 1 ? 'Photo' : 'Photos'}
+                <span className="badge bg-purple-subtle text-purple border border-purple-subtle rounded-pill px-3 py-2 fs-6 d-inline-flex align-items-center gap-1 ms-2">
+                  <FontAwesomeIcon icon={faImage} />
+                  <span>{photos.length} {photos.length === 1 ? 'Photo' : 'Photos'}</span>
                 </span>
               </div>
-              <p className="text-secondary small mb-0">
-                Created: {album?.createdAt ? new Date(album.createdAt).toLocaleDateString() : 'Recently'}
+              <p className="text-secondary small mb-0 d-flex align-items-center gap-1">
+                <FontAwesomeIcon icon={faCalendarDays} className="text-muted" />
+                <span>Created: {album?.createdAt ? new Date(album.createdAt).toLocaleDateString() : 'Recently'}</span>
               </p>
             </div>
 
             <button
               onClick={() => setShowPhotoForm(!showPhotoForm)}
-              className="btn btn-primary px-4 py-2 fw-semibold shadow-sm align-self-start align-self-md-center"
+              className="btn btn-primary px-4 py-2 fw-semibold shadow-sm align-self-start align-self-md-center d-inline-flex align-items-center gap-2"
             >
-              {showPhotoForm ? 'Close Form' : 'Add Photo'}
+              {showPhotoForm ? (
+                <>
+                  <FontAwesomeIcon icon={faXmark} />
+                  <span>Close Form</span>
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faPlus} />
+                  <span>Add Photo</span>
+                </>
+              )}
             </button>
           </div>
 
@@ -179,29 +196,33 @@ function AlbumDetailPage() {
           {/* Photos Grid / Empty State */}
           {photos.length === 0 ? (
             <div className="text-center py-5 bg-white rounded-3 shadow-sm border p-5 mt-4">
+              <FontAwesomeIcon icon={faImages} className="text-primary opacity-50 mb-3" style={{ fontSize: '3.5rem' }} />
               <h4 className="fw-bold text-dark mb-2">No Photos in this Album</h4>
               <p className="text-muted mb-4">
                 This album is currently empty. Click the button below to add your first photo!
               </p>
               <button
                 onClick={() => setShowPhotoForm(true)}
-                className="btn btn-primary px-4 py-2 fw-semibold"
+                className="btn btn-primary px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"
               >
-                Add First Photo
+                <FontAwesomeIcon icon={faPlus} />
+                <span>Add First Photo</span>
               </button>
             </div>
           ) : filteredPhotos.length === 0 ? (
             /* Empty Search Results State */
             <div className="text-center py-5 bg-white rounded-3 shadow-sm border p-5">
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="text-secondary opacity-50 mb-3" style={{ fontSize: '3.5rem' }} />
               <h5 className="fw-bold text-dark mb-2">No Matching Photos Found</h5>
               <p className="text-muted mb-4">
                 No photos in <strong>"{album?.name}"</strong> match your search query "<strong>{searchTerm}</strong>".
               </p>
               <button
                 onClick={() => setSearchTerm('')}
-                className="btn btn-outline-primary px-4 py-2 fw-semibold"
+                className="btn btn-outline-primary px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"
               >
-                Clear Search Filter
+                <FontAwesomeIcon icon={faRotateLeft} />
+                <span>Clear Search Filter</span>
               </button>
             </div>
           ) : (
@@ -223,3 +244,4 @@ function AlbumDetailPage() {
 }
 
 export default AlbumDetailPage;
+
