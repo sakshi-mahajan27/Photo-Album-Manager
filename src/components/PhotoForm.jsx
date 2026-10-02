@@ -1,11 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faHeading, faLink, faFloppyDisk, faXmark, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faHeading,
+  faFloppyDisk,
+  faXmark,
+  faCircleExclamation,
+  faUpload,
+  faFileImage,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons';
 
 function PhotoForm({ onAddPhoto, onCancel, isSubmitting = false }) {
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedFileSize, setSelectedFileSize] = useState('');
   const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
+
+  const MAX_FILE_SIZE_MB = 5;
+  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    setError('');
+
+    if (!file) {
+      return;
+    }
+
+    // 1. File Type Validation
+    const isImage = file.type.startsWith('image/') || ALLOWED_TYPES.includes(file.type.toLowerCase());
+    if (!isImage) {
+      setError('Invalid file format. Please select a valid image file (JPG, JPEG, PNG, WEBP, GIF, SVG).');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    // 2. File Size Validation (Max 5MB)
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setError(`File size exceeds the ${MAX_FILE_SIZE_MB}MB limit. Please select a smaller image file.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    // 3. Read image file with FileReader
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result;
+      if (!dataUrl) {
+        setError('Failed to read the image file. Please try selecting the file again.');
+        return;
+      }
+      setImageUrl(dataUrl);
+      setPreviewUrl(dataUrl);
+      setSelectedFileName(file.name);
+      setSelectedFileSize((file.size / (1024 * 1024)).toFixed(2) + ' MB');
+    };
+
+    reader.onerror = () => {
+      setError('An error occurred while reading the image file. The file may be unreadable or corrupt.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const handleClearFile = () => {
+    setImageUrl('');
+    setPreviewUrl('');
+    setSelectedFileName('');
+    setSelectedFileSize('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,20 +89,26 @@ function PhotoForm({ onAddPhoto, onCancel, isSubmitting = false }) {
     }
 
     if (!trimmedUrl) {
-      setError('Image URL cannot be empty.');
+      setError('Please select an image file from your device.');
       return;
     }
 
     setError('');
     onAddPhoto({ title: trimmedTitle, imageUrl: trimmedUrl });
+
+    // Reset form after successful submission
     setTitle('');
     setImageUrl('');
+    setPreviewUrl('');
+    setSelectedFileName('');
+    setSelectedFileSize('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <div className="card shadow-sm border-0 mb-4 p-4 bg-white rounded-3">
       <div className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-        <h5 className="fw-bold text-primary mb-0 d-flex align-items-center gap-2">
+        <h5 className="fw-bold mb-0 d-flex align-items-center gap-2">
           <FontAwesomeIcon icon={faPlus} />
           <span>Add New Photo</span>
         </h5>
@@ -47,7 +124,7 @@ function PhotoForm({ onAddPhoto, onCancel, isSubmitting = false }) {
 
       {error && (
         <div className="alert alert-danger d-flex align-items-center py-2 px-3 small mb-3 rounded-2" role="alert">
-          <FontAwesomeIcon icon={faCircleExclamation} className="me-2" />
+          <FontAwesomeIcon icon={faCircleExclamation} className="me-2 flex-shrink-0" />
           <div>{error}</div>
         </div>
       )}
@@ -74,26 +151,24 @@ function PhotoForm({ onAddPhoto, onCancel, isSubmitting = false }) {
           />
         </div>
 
+        {/* Device File Upload Field */}
         <div className="mb-3">
-          <label htmlFor="imageUrl" className="form-label fw-semibold text-dark d-flex align-items-center gap-1">
-            <FontAwesomeIcon icon={faLink} className="text-muted small" />
-            <span>Image URL</span>
+          <label htmlFor="photoFile" className="form-label fw-semibold text-dark d-flex align-items-center gap-1">
+            <FontAwesomeIcon icon={faUpload} className="text-muted small" />
+            <span>Choose Image File</span>
             <span className="text-danger">*</span>
           </label>
           <input
-            type="url"
+            type="file"
             className="form-control"
-            id="imageUrl"
-            placeholder="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
-            value={imageUrl}
-            onChange={(e) => {
-              setImageUrl(e.target.value);
-              if (error) setError('');
-            }}
+            id="photoFile"
+            ref={fileInputRef}
+            accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,.jpg,.jpeg,.png,.webp,.gif,.svg"
+            onChange={handleFileChange}
             disabled={isSubmitting}
           />
           <div className="form-text text-muted">
-            Provide a direct public image URL link.
+            Select an image file from your computer or mobile device (JPG, PNG, WEBP, GIF, SVG - Max 5 MB).
           </div>
         </div>
 
@@ -117,7 +192,7 @@ function PhotoForm({ onAddPhoto, onCancel, isSubmitting = false }) {
             {isSubmitting ? (
               <>
                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                <span>Adding Photo...</span>
+                <span>Saving Photo...</span>
               </>
             ) : (
               <>
