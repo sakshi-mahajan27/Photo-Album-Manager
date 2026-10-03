@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faFolderOpen, faImage, faPlus, faXmark, faCircleExclamation, faImages, faMagnifyingGlass, faRotateLeft, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faImage, faPlus, faXmark, faCircleExclamation, faImages, faMagnifyingGlass, faRotateLeft, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
 import PhotoCard from '../components/PhotoCard';
 import PhotoForm from '../components/PhotoForm';
 import SearchBar from '../components/SearchBar';
@@ -244,4 +244,3 @@ function AlbumDetailPage() {
 }
 
 export default AlbumDetailPage;
-
